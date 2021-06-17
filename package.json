@@ -1,0 +1,19 @@
+{
+  "name": "will-it-rain",
+  "version": "1.0.0",
+  "description": "a web app that will check if it will rain within a week",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "javascript-obfuscator": "^2.6.1",
+    "nodemon": "^2.0.5"
+  }
+}
