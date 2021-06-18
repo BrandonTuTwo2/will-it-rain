@@ -14,11 +14,16 @@ h2 {
   width: 400px;
 }
 
-.fadeIn {
-  animation: fadeIn 2s;
-  -moz-animation: fadein 2s; /* Firefox */
-  -webkit-animation: fadein 2s; /* Safari and Chrome */
-  -o-animation: fadein 2s; /* Opera */
+.info {
+  margin-top: 50px;
+
+  box-shadow: 2px 2px 4px #000000;
+  background-color: white;
+
+  animation: slideUp 1.4s ease;
+  -moz-animation: slideUp 1.4s ease;
+  -webkit-animation: slideUp 1.4s ease;
+  -o-animation: slideUp 1.4s ease;
 }
 html {
     width: 60%;
@@ -47,6 +52,14 @@ input[type=submit], button {
     cursor: hand;
 }
 
+@keyframes slideUp {
+      0%{
+        transform: translateY(250px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+}
 @keyframes fadein {
     from {
         opacity:0;

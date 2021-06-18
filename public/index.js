@@ -1,10 +1,14 @@
 function createInfo(text) {
-  $("#infoDisplay").append("<h3 class=\"fadeIn\">" + text +"</h3>")
+  $("#infoDisplay").append("<h3 class=\"info\">" + text +"</h3>")
 }
 
 jQuery(document).ready(function() {
 
   document.getElementById("addressBTN").onclick = function(e) {
+    let currentForcastDay = 0;
+    let startOfForcastDay = 0;
+    let dayCheck = 0;
+    let dayInHours = 0;
     let address = "";
     let lon = "";
     let lat = "";
@@ -58,8 +62,22 @@ jQuery(document).ready(function() {
       });
     }
     for(let ind of forcast) {
+      dayInHours = parseFloat(ind.timepoint);
+      if(dayInHours%24 == 0) {
+        startOfForcastDay = Math.floor(dayInHours/24);
+        dayCheck = 0;
+      }
+
       if(ind.prec_type == "rain"){
-        createInfo("around " + ind.timepoint +" hours from now rain will occur");
+        currentForcastDay = Math.floor(dayInHours/24);
+        if(currentForcastDay == startOfForcastDay && dayCheck == 0) {
+          if(currentForcastDay == 0) {
+            createInfo("rain will occur today");
+          } else {
+            createInfo("rain will occur " + currentForcastDay + " days from now");
+          }
+          dayCheck = 1;
+        }
       }
     }
   }
