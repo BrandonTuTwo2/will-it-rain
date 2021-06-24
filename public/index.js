@@ -2,9 +2,16 @@ function createInfo(text) {
   $("#infoDisplay").append("<h3 class=\"info\">" + text +"</h3>")
 }
 
+function createSubInfo(text) {
+  $("#infoDisplay").append("<h3 class=\"subInfo\">" + text +"</h3>")
+}
+
 jQuery(document).ready(function() {
 
   document.getElementById("addressBTN").onclick = function(e) {
+    let analogTime = 0;
+    let amOrPm = "";
+    let stillRaining = false;
     let currentForcastDay = 0;
     let startOfForcastDay = 0;
     let dayCheck = 0;
@@ -61,24 +68,50 @@ jQuery(document).ready(function() {
         async:false
       });
     }
-    for(let ind of forcast) {
+    for(var i = 0; i < forcast.length;i++) {
+      var ind = forcast[i]
       dayInHours = parseFloat(ind.timepoint);
       if(dayInHours%24 == 0) {
         startOfForcastDay = Math.floor(dayInHours/24);
         dayCheck = 0;
       }
 
+      analogTime = ind.timepoint%24;
+      console.log(analogTime);
+      amOrPm = "am";
+      if(analogTime > 12) {
+        analogTime -= 12;
+        amOrPm = "pm"
+      }else if(analogTime == 0) {
+        analogTime = 12;
+      }
+
       if(ind.prec_type == "rain"){
         currentForcastDay = Math.floor(dayInHours/24);
         if(currentForcastDay == startOfForcastDay && dayCheck == 0) {
           if(currentForcastDay == 0) {
-            createInfo("rain will occur today");
+            createInfo("it will rain today");
           } else {
-            createInfo("rain will occur " + currentForcastDay + " days from now");
+            createInfo("it will rain " + currentForcastDay + " days from now");
           }
           dayCheck = 1;
         }
       }
+
+      if(i != 0 && i != 64) {
+        if(ind.timepoint%24 == 21 && ind.prec_type == "rain") {
+          createSubInfo("rain will continue to the day after");
+          stillRaining = true;
+        }
+        if((forcast[i-1].prec_type != "rain" && ind.prec_type == "rain") || (ind.timepoint%24 == 0 && ind.prec_type == "rain") && !stillRaining) {
+          createSubInfo("start of rain: " + analogTime + amOrPm);
+        } else if((forcast[i-1].prec_type == "rain" && ind.prec_type == "none")) {
+          createSubInfo("end of rain: " + analogTime + amOrPm);
+          stillRaining = false;
+        }
+      }
+
+
     }
   }
 
