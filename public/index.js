@@ -6,9 +6,37 @@ function createSubInfo(text) {
   $("#infoDisplay").append("<h3 class=\"subInfo\">" + text +"</h3>")
 }
 
+function removeInfo() {
+  $("#infoDisplay h3").remove();
+
+}
+//reminder to check for leap years
+function calcDate(day, month, year, daysApart) {
+  var newDate = "";
+  var newDay = day;
+  var newMonth = month;
+  var newYear = year;
+  const monthLimit = [31,28,31,30,31,30,31,31,30,31,30,31];
+  newDay = day + daysApart
+  if(newDay > monthLimit[month-1]) {
+    newMonth+= 1;
+    newDay = 1;
+    if(newMonth > 12) {
+      newMonth = 1;
+      newYear += 1;
+    }
+  }
+
+  newDate = newDay.toString() + "/" + newMonth.toString() + "/" + newYear.toString();
+  //console.log(newDay + "/" + newMonth + "/" + newYear);
+  return newDate;
+}
+
 jQuery(document).ready(function() {
 
   document.getElementById("addressBTN").onclick = function(e) {
+    var today = new Date();
+    let newDate = "";
     let analogTime = 0;
     let amOrPm = "";
     let stillRaining = false;
@@ -21,6 +49,8 @@ jQuery(document).ready(function() {
     let lat = "";
     let length = 0;
     let forcast = [];
+
+    removeInfo();
     console.log("search button clicked!");
     address = document.getElementById("addressInput").value;
     console.log(address);
@@ -77,7 +107,7 @@ jQuery(document).ready(function() {
       }
 
       analogTime = ind.timepoint%24;
-      console.log(analogTime);
+      //console.log(analogTime);
       amOrPm = "am";
       if(analogTime > 12) {
         analogTime -= 12;
@@ -86,13 +116,16 @@ jQuery(document).ready(function() {
         analogTime = 12;
       }
 
-      if(ind.prec_type == "rain"){
+      if(ind.prec_type == "rain" && currentForcastDay != 7){
         currentForcastDay = Math.floor(dayInHours/24);
         if(currentForcastDay == startOfForcastDay && dayCheck == 0) {
           if(currentForcastDay == 0) {
-            createInfo("it will rain today");
+            createInfo("it will rain today (" + today.getDate().toString() +"/" + today.getMonth().toString() + "/" + today.getFullYear().toString() +  " )");
           } else {
-            createInfo("it will rain " + currentForcastDay + " days from now");
+            newDate = calcDate(today.getDate(),today.getMonth(),today.getFullYear(),currentForcastDay);
+            console.log(newDate);
+            createInfo("it will rain " + currentForcastDay + " days from now (" + newDate + ")");
+
           }
           dayCheck = 1;
         }
@@ -104,9 +137,9 @@ jQuery(document).ready(function() {
           stillRaining = true;
         }
         if((forcast[i-1].prec_type != "rain" && ind.prec_type == "rain") || (ind.timepoint%24 == 0 && ind.prec_type == "rain") && !stillRaining) {
-          createSubInfo("start of rain: " + analogTime + amOrPm);
+          createSubInfo("it will start raining around: " + analogTime + amOrPm);
         } else if((forcast[i-1].prec_type == "rain" && ind.prec_type == "none")) {
-          createSubInfo("end of rain: " + analogTime + amOrPm);
+          createSubInfo("it will stop raining around: " + analogTime + amOrPm);
           stillRaining = false;
         }
       }

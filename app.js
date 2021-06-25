@@ -35,27 +35,6 @@ app.get('/index.js',function(req,res){
   });
 });
 
-
-
-//gets the JSON object from the website at the given comic page and returns it to the front end
-app.get('/nextPage', function(req,res){
-  let nextPage = req.query.page;
-  let url = 'http://xkcd.com/';
-  let comicJSON = {};
-
-  axios.get(url + nextPage + '/info.0.json')
-    .then(result =>{
-      comicJSON = result.data;
-      console.log(comicJSON);
-      res.send(comicJSON);
-    })
-    .catch(error => {
-      console.log(error);
-      res.send({error});
-    })
-});
-
-
 app.get('/getAddressData', function(req,res){
   let url = "https://nominatim.openstreetmap.org/search?q=";
   let address = req.query.address

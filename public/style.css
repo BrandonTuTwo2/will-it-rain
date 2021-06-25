@@ -1,5 +1,7 @@
 h1 {
+  font-family: "Courier New, monospace";
   text-align: center;
+  color: white;
 }
 
 h2 {
@@ -26,11 +28,12 @@ th, td {
 }
 
 #addressInput {
-  width: 400px;
+  width: 600px;
 }
 
 .info {
   margin-top: 50px;
+  font-family: "Courier New, monospace";
 
   box-shadow: 2px 2px 4px #000000;
   background-color: white;
@@ -43,10 +46,10 @@ th, td {
 
 .subInfo {
   margin-top: 50px;
-
+  margin-left: 40px;
   box-shadow: 2px 2px 4px #000000;
   background-color: #f05a0f;
-
+  font-family: "Courier New, monospace";
   animation: slideUp 1.4s ease;
   -moz-animation: slideUp 1.4s ease;
   -webkit-animation: slideUp 1.4s ease;
@@ -59,9 +62,11 @@ html {
     min-height: 100%;
     margin: 0 auto;
     font-size: 16px;
-    background-color: #0fa5f0;
 }
+
 body {
+    background-image: url('https://media.giphy.com/media/pVGsAWjzvXcZW4ZBTE/giphy.gif');
+    background-size: cover;
     height: 100%;
     min-height: 100%;
     line-height: 1.75;
