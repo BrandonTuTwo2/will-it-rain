@@ -17,10 +17,12 @@ function calcDate(day, month, year, daysApart) {
   var newMonth = month;
   var newYear = year;
   const monthLimit = [31,28,31,30,31,30,31,31,30,31,30,31];
+  console.log("day is " + day + " month is " + month + "year is " + year + "daysapart is " + daysApart);
   newDay = day + daysApart
-  if(newDay > monthLimit[month-1]) {
+  if(newDay >= monthLimit[month-1]) {
     newMonth+= 1;
-    newDay = 1;
+
+    newDay = -((monthLimit[month-1] - day) - daysApart) + 1;
     if(newMonth > 12) {
       newMonth = 1;
       newYear += 1;
@@ -28,12 +30,10 @@ function calcDate(day, month, year, daysApart) {
   }
 
   newDate = newDay.toString() + "/" + newMonth.toString() + "/" + newYear.toString();
-  //console.log(newDay + "/" + newMonth + "/" + newYear);
   return newDate;
 }
 
 jQuery(document).ready(function() {
-
   document.getElementById("addressBTN").onclick = function(e) {
     var today = new Date();
     let newDate = "";
