@@ -34,6 +34,12 @@ function calcDate(day, month, year, daysApart) {
 }
 
 jQuery(document).ready(function() {
+  var popUp = document.getElementById("popUp");
+  var close = document.getElementsByClassName("close")[0];
+
+  close.onclick = function(e) {
+    popUp.style.display = "none";
+  }
   document.getElementById("addressBTN").onclick = function(e) {
     var today = new Date();
     let newDate = "";
@@ -78,7 +84,9 @@ jQuery(document).ready(function() {
     });
 
     if(length == 0) {
-      alert("sorry no such place could be found");
+      //alert("sorry no such place could be found");
+      popUp.style.display = "block";
+
     } else {
       jQuery.ajax({
         type: 'get',
