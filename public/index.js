@@ -22,7 +22,7 @@ function calcDate(day, month, year, daysApart) {
     var newMonth = month;
     var newYear = year;
     const monthLimit = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    console.log("day is " + day + " month is " + month + "year is " + year + "daysapart is " + daysApart);
+    //console.log("day is " + day + " month is " + month + " year is " + year + " daysapart is " + daysApart);
     newDay = day + daysApart
     if (newDay >= monthLimit[month - 1]) {
         newMonth += 1;
@@ -33,7 +33,7 @@ function calcDate(day, month, year, daysApart) {
             newYear += 1;
         }
     }
-
+    newMonth+= 1;
     newDate = newDay.toString() + "/" + newMonth.toString() + "/" + newYear.toString();
     return newDate;
 }
@@ -46,7 +46,6 @@ jQuery(document).ready(function() {
     which we then plug into the 7Timer api which returns a 7 day forcast of the weather counted by numbers divisble by 3*/
     document.getElementById("addressBTN").onclick = function(e) {
         var today = new Date();
-        let isRain = false;
         let newDate = "";
         let analogTime = 0;
         let amOrPm = "";
@@ -61,13 +60,11 @@ jQuery(document).ready(function() {
         let length = 0;
         let forcast = [];
 
-        //clears the previous info and grabs the data from the input line
         removeInfo();
         console.log("search button clicked!");
         address = document.getElementById("addressInput").value;
         console.log(address);
 
-        //ajax call to conver the addess to latitude and longitude
         jQuery.ajax({
             type: 'get',
             dataType: 'json',
@@ -90,12 +87,11 @@ jQuery(document).ready(function() {
             async: false
         });
 
-        //if the retuned JSON object has the length of 0 then it probably isn't a valid address so it alerts the user
         if (length == 0) {
-            console.log("invalid location");
+            //alert("sorry no such place could be found");
             popUp.style.display = "block";
+
         } else {
-            //second ajax call that gets the forcast given the latitude and longitude
             jQuery.ajax({
                 type: 'get',
                 dataType: 'json',
@@ -114,18 +110,16 @@ jQuery(document).ready(function() {
                 async: false
             });
         }
-
         for (var i = 0; i < forcast.length; i++) {
             var ind = forcast[i]
             dayInHours = parseFloat(ind.timepoint);
-
             if (dayInHours % 24 == 0) {
                 startOfForcastDay = Math.floor(dayInHours / 24);
                 dayCheck = 0;
             }
 
-            //converts the timepoint into normal time
-            analogTime = ind.timepoint % 24;
+            analogTime = (14 + ind.timepoint) % 24;
+            //console.log(analogTime);
             amOrPm = "am";
             if (analogTime > 12) {
                 analogTime -= 12;
@@ -134,25 +128,21 @@ jQuery(document).ready(function() {
                 analogTime = 12;
             }
 
-            //finds the date of the day
-            newDate = calcDate(today.getDate(), today.getMonth(), today.getFullYear(), currentForcastDay);
-
-            //if its a rainy day then it will dispaly the appropriate
             if (ind.prec_type == "rain" && currentForcastDay != 7) {
-                isRain = true;
                 currentForcastDay = Math.floor(dayInHours / 24);
                 if (currentForcastDay == startOfForcastDay && dayCheck == 0) {
                     if (currentForcastDay == 0) {
-                        createInfo("it will rain today (" + newDate + " )");
+                        createInfo("it will rain today (" + today.getDate().toString() + "/" + (today.getMonth()+1).toString() + "/" + today.getFullYear().toString() + " )");
                     } else {
+                        newDate = calcDate(today.getDate(), today.getMonth(), today.getFullYear(), currentForcastDay);
                         console.log(newDate);
                         createInfo("it will rain " + currentForcastDay + " days from now (" + newDate + ")");
+
                     }
                     dayCheck = 1;
                 }
             }
 
-            //if it continues to the next day then it will display as such and it will display if it stop raining on a differnt day
             if (i != 0 && i != 64) {
                 if (ind.timepoint % 24 == 21 && ind.prec_type == "rain") {
                     createSubInfo("rain will continue to the day after");
@@ -166,12 +156,8 @@ jQuery(document).ready(function() {
                 }
             }
 
-            //if there is no rain for the entire day then it will display as such
-            if (ind.prec_type != "rain" && !isRain) {
-                createInfo("there is no rain " + currentForcastDay + " days from now (" + newDate + ")");
-            }
+
         }
-        isRain = false;
     }
 
     //makes it so that it will close the modal/popup if they click somewhere else
