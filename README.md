@@ -14,4 +14,6 @@ The modal code/popup is based on the code found on the W3school code (found here
 **Additional Note:** this app was made mainly for my parents who can't be bothered to check if its going to rain themselves and asking me to do it instead :')
 
 
-Latest Updated Date: 2021 06 29
+More work needs to be done regarding timepoint issues
+
+Latest Updated Date: 2021 06 30
