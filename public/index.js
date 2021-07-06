@@ -14,6 +14,18 @@ function removeInfo() {
 
 }
 
+//gets the last time when it was updated
+function getLatestTime(obj) {
+    var date = obj.init;
+    var dateLength = date.length;
+    var latestTime = date.substring(dateLength - 2, dateLength);
+
+    console.log("init is " + date);
+    console.log("latestTime is " + latestTime);
+
+    return latestTime;
+}
+
 //reminder to check for leap years
 //calculate the new date based on the days apart from the current date
 function calcDate(day, month, year, daysApart) {
@@ -33,7 +45,7 @@ function calcDate(day, month, year, daysApart) {
             newYear += 1;
         }
     }
-    newMonth+= 1;
+    newMonth += 1;
     newDate = newDay.toString() + "/" + newMonth.toString() + "/" + newYear.toString();
     return newDate;
 }
@@ -46,6 +58,7 @@ jQuery(document).ready(function() {
     which we then plug into the 7Timer api which returns a 7 day forcast of the weather counted by numbers divisble by 3*/
     document.getElementById("addressBTN").onclick = function(e) {
         var today = new Date();
+        var lastUpdatedTime;
         let newDate = "";
         let analogTime = 0;
         let amOrPm = "";
@@ -102,6 +115,8 @@ jQuery(document).ready(function() {
                 },
                 success: function(data) {
                     console.log(data);
+                    lastUpdatedTime = parseInt(getLatestTime(data));
+
                     forcast = data["dataseries"];
                 },
                 fail: function(error) {
@@ -110,15 +125,12 @@ jQuery(document).ready(function() {
                 async: false
             });
         }
+
+
         for (var i = 0; i < forcast.length; i++) {
             var ind = forcast[i]
-            dayInHours = parseFloat(ind.timepoint);
-            if (dayInHours % 24 == 0) {
-                startOfForcastDay = Math.floor(dayInHours / 24);
-                dayCheck = 0;
-            }
 
-            analogTime = (14 + ind.timepoint) % 24;
+            analogTime = (lastUpdatedTime + ind.timepoint) % 24;
             //console.log(analogTime);
             amOrPm = "am";
             if (analogTime > 12) {
@@ -128,11 +140,17 @@ jQuery(document).ready(function() {
                 analogTime = 12;
             }
 
+            dayInHours = (lastUpdatedTime + ind.timepoint);
+            if (dayInHours % 24 == 0) {
+                startOfForcastDay = Math.floor(dayInHours / 24);
+                dayCheck = 0;
+            }
+
             if (ind.prec_type == "rain" && currentForcastDay != 7) {
                 currentForcastDay = Math.floor(dayInHours / 24);
                 if (currentForcastDay == startOfForcastDay && dayCheck == 0) {
                     if (currentForcastDay == 0) {
-                        createInfo("it will rain today (" + today.getDate().toString() + "/" + (today.getMonth()+1).toString() + "/" + today.getFullYear().toString() + " )");
+                        createInfo("it will rain today (" + today.getDate().toString() + "/" + (today.getMonth() + 1).toString() + "/" + today.getFullYear().toString() + " )");
                     } else {
                         newDate = calcDate(today.getDate(), today.getMonth(), today.getFullYear(), currentForcastDay);
                         console.log(newDate);
@@ -144,14 +162,18 @@ jQuery(document).ready(function() {
             }
 
             if (i != 0 && i != 64) {
-                if (ind.timepoint % 24 == 21 && ind.prec_type == "rain") {
+                /*if (dayInHours % 24 == 21 && ind.prec_type == "rain") {
                     createSubInfo("rain will continue to the day after");
                     stillRaining = true;
-                }
-                if ((forcast[i - 1].prec_type != "rain" && ind.prec_type == "rain") || (ind.timepoint % 24 == 0 && ind.prec_type == "rain") && !stillRaining) {
+                }*/
+                if ((forcast[i - 1].prec_type != "rain" && ind.prec_type == "rain") || (dayInHours % 24 == 0 && ind.prec_type == "rain") && !stillRaining) {
                     createSubInfo("it will start raining around: " + analogTime + amOrPm);
                 } else if ((forcast[i - 1].prec_type == "rain" && ind.prec_type == "none")) {
-                    createSubInfo("it will stop raining around: " + analogTime + amOrPm);
+                    analogTime -= 3;
+                    if (analogTime == 0) {
+                        analogTime = 12;
+                    }
+                    createSubInfo("it will stop raining around: " + (analogTime) + amOrPm);
                     stillRaining = false;
                 }
             }
