@@ -141,6 +141,10 @@ jQuery(document).ready(function() {
             }
 
             dayInHours = (lastUpdatedTime + ind.timepoint);
+
+            console.log("analogTime is = " + analogTime);
+            console.log("day in hours is = " + dayInHours);
+
             if (dayInHours % 24 == 0) {
                 startOfForcastDay = Math.floor(dayInHours / 24);
                 dayCheck = 0;
@@ -162,10 +166,10 @@ jQuery(document).ready(function() {
             }
 
             if (i != 0 && i != 64) {
-                /*if (dayInHours % 24 == 21 && ind.prec_type == "rain") {
+                if (dayInHours % 24 == 21 && ind.prec_type == "rain") {
                     createSubInfo("rain will continue to the day after");
                     stillRaining = true;
-                }*/
+                }
                 if ((forcast[i - 1].prec_type != "rain" && ind.prec_type == "rain") || (dayInHours % 24 == 0 && ind.prec_type == "rain") && !stillRaining) {
                     createSubInfo("it will start raining around: " + analogTime + amOrPm);
                 } else if ((forcast[i - 1].prec_type == "rain" && ind.prec_type == "none")) {
@@ -176,6 +180,15 @@ jQuery(document).ready(function() {
                     createSubInfo("it will stop raining around: " + (analogTime) + amOrPm);
                     stillRaining = false;
                 }
+            } else if(i == 0){
+              if(forcast[i].prec_type == "rain"){
+                createSubInfo("it will start raining around: " + analogTime + amOrPm);
+              }
+            } else if(i == 64){
+              if(forcast[i].prec_type == "rain"){
+                createSubInfo("rain will continue to the day after");
+                stillRaining = true;
+              }
             }
 
 
